@@ -30,7 +30,7 @@ def get_uptime_of_pm2_service(service: str):
             check=True,
         ).stdout.decode("utf-8")
     )
-    print(unparsed_time, type(unparsed_time))
+    print(unparsed_time[0].keys())
 
 
 if __name__ == "__main__":

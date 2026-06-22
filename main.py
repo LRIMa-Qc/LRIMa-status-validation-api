@@ -9,7 +9,7 @@ def main():
 
 def get_update_of_service(service: str):
     unparsed_time = subprocess.run(
-        ["/usr/bin/systemctl", "show--property=ActiveEnterTimestamp", service],
+        ["/usr/bin/systemctl", "show", "--property=ActiveEnterTimestamp", service],
         capture_output=True,
         check=True,
     ).stdout.decode("utf-8")

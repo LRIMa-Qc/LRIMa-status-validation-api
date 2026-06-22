@@ -85,4 +85,4 @@ def get_service_uptime_all():
             }
         )
 
-    return
+    return all_times

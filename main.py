@@ -38,6 +38,7 @@ def get_uptime_of_pm2_service(service: str):
     if index_of_service == -1:
         raise KeyError("didn't find requested service")
     uptimes = list(map(lambda x: x["pm2_env"]["pm_uptime"], unparsed_time))
+    print(uptimes[index_of_service])
     uptime_of_requested_service = datetime.fromtimestamp(uptimes[index_of_service])
     return uptime_of_requested_service
 

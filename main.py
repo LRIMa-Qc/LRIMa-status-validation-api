@@ -34,9 +34,12 @@ def get_uptime_of_pm2_service(service: str) -> datetime:
         ).stdout.decode("utf-8")
     )
     names = [x["name"] for x in unparsed_time]
+    is_alive = [True if x["pid"] != 0 else False for x in unparsed_time]
     index_of_service = names.index(service)
     uptimes = [x["pm2_env"]["pm_uptime"] for x in unparsed_time]
-    return datetime.fromtimestamp(uptimes[index_of_service] / 1000)
+    return datetime.fromtimestamp(
+        uptimes[index_of_service] / 1000 if is_alive[index_of_service] else 0
+    )
 
 
 @app.route("/uptime/<service_name>")

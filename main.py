@@ -48,6 +48,7 @@ def get_service_uptime(service_name: str):
     if manager is None:
         abort(403, description=f"Service '{service_name}' is not in the whitelist.")
 
+    uptime: datetime | None = None
     match manager:
         case "systemd":
             uptime = get_uptime_of_systemd_service(service_name)
@@ -56,10 +57,12 @@ def get_service_uptime(service_name: str):
         case _:
             abort(500, description=f"Unknown manager: {manager}")
 
+    if not uptime:
+        abort(500, description=f"uptime not found: {manager}")
     return jsonify(
         {
             "service": service_name,
-            "manager": manager,
+            "is_alive": True if uptime.timestamp() != 0 else False,
             "uptime": uptime.isoformat(),
         }
     )
@@ -82,6 +85,7 @@ def get_service_uptime_all():
         all_times.append(
             {
                 "service": i,
+                "is_alive": True if uptime.timestamp() != 0 else False,
                 "uptime": uptime.isoformat(),
             }
         )

@@ -1,24 +1,36 @@
 import subprocess
 from datetime import datetime
+import json
 
 
 def main():
-    get_update_of_service("nginx")
+    get_uptime_of_systemd_service("nginx")
+    get_uptime_of_pm2_service("temporary value")
 
 
-def get_update_of_service(service: str):
+def get_uptime_of_systemd_service(service: str):
     unparsed_time = subprocess.run(
         ["/usr/bin/systemctl", "show", "--property=ActiveEnterTimestamp", service],
         capture_output=True,
         check=True,
     ).stdout.decode("utf-8")
     list_of_time = unparsed_time.split("=")[-1].strip()
-    # ActiveEnterTimestamp=Wed 2026-06-17 16:48:16 EDT
     date = datetime.strptime(
         list_of_time,
         "%a %Y-%m-%d %H:%M:%S %Z",
     )
-    print(date)
+    return date
+
+
+def get_uptime_of_pm2_service(service: str):
+    unparsed_time = json.loads(
+        subprocess.run(
+            ["pm2", "jlist"],
+            capture_output=True,
+            check=True,
+        ).stdout.decode("utf-8")
+    )
+    print(unparsed_time, type(unparsed_time))
 
 
 if __name__ == "__main__":

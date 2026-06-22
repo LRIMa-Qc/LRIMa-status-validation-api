@@ -8,9 +8,10 @@ app = Flask(__name__)
 
 SERVICE_WHITELIST: dict[str, str] = {
     "nginx": "systemd",
-    "culture-backend": "pm2",
-    "disease-detection": "pm2",
-    "server": "pm2",
+    "LRIMaCulture Disease Detection": "pm2",
+    "LRIMaCulture Imager": "pm2",
+    "LRIMaCulture Backend": "pm2",
+    "LRIMaCulture Mobile Application": "pm2",
 }
 
 
@@ -83,4 +84,3 @@ def get_service_uptime_all():
         )
 
     return jsonify(all_times)
-

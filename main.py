@@ -25,7 +25,13 @@ def get_uptime_of_systemd_service(service: str):
 def get_uptime_of_pm2_service(service: str):
     unparsed_time = json.loads(
         subprocess.run(
-            ["pm2", "jlist"],
+            [
+                "pm2",
+                "jlist",
+                "|",
+                "jq",
+                ".[] | {name: .name, uptime: .pm2_env.pm_uptime}",
+            ],
             capture_output=True,
             check=True,
         ).stdout.decode("utf-8")

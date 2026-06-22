@@ -28,15 +28,12 @@ def get_uptime_of_pm2_service(service: str):
             [
                 "pm2",
                 "jlist",
-                "|",
-                "jq",
-                ".[] | {name: .name, uptime: .pm2_env.pm_uptime}",
             ],
             capture_output=True,
             check=True,
         ).stdout.decode("utf-8")
     )
-    print(unparsed_time[0].keys())
+    parsed_time = map(lambda x: x["pm2_env"]["env"])
 
 
 if __name__ == "__main__":

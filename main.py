@@ -2,9 +2,9 @@ import subprocess
 from datetime import datetime
 import json
 
-from fastapi import FastAPI, HTTPException
+from flask import Flask, jsonify, abort
 
-app = FastAPI(title="LRIMa Status Validation API")
+app = Flask(__name__)
 
 SERVICE_WHITELIST: dict[str, str] = {
     "nginx": "systemd",
@@ -38,14 +38,11 @@ def get_uptime_of_pm2_service(service: str) -> datetime:
     return datetime.fromtimestamp(uptimes[index_of_service] / 1000)
 
 
-@app.get("/uptime/{service_name}")
+@app.route("/uptime/<service_name>")
 def get_service_uptime(service_name: str):
     manager = SERVICE_WHITELIST.get(service_name)
     if manager is None:
-        raise HTTPException(
-            status_code=403,
-            detail=f"Service '{service_name}' is not in the whitelist.",
-        )
+        abort(403, description=f"Service '{service_name}' is not in the whitelist.")
 
     match manager:
         case "systemd":
@@ -53,16 +50,18 @@ def get_service_uptime(service_name: str):
         case "pm2":
             uptime = get_uptime_of_pm2_service(service_name)
         case _:
-            raise HTTPException(status_code=500, detail=f"Unknown manager: {manager}")
+            abort(500, description=f"Unknown manager: {manager}")
 
-    return {
-        "service": service_name,
-        "manager": manager,
-        "uptime": uptime.isoformat(),
-    }
+    return jsonify(
+        {
+            "service": service_name,
+            "manager": manager,
+            "uptime": uptime.isoformat(),
+        }
+    )
 
 
-@app.get("/uptime/")
+@app.route("/uptime/")
 def get_service_uptime_all():
     all_times = []
     for i in SERVICE_WHITELIST:
@@ -75,9 +74,7 @@ def get_service_uptime_all():
             case "pm2":
                 uptime = get_uptime_of_pm2_service(i)
             case _:
-                raise HTTPException(
-                    status_code=500, detail=f"Unknown manager: {manager}"
-                )
+                abort(500, description=f"Unknown manager: {manager}")
         all_times.append(
             {
                 "service": i,
@@ -85,4 +82,4 @@ def get_service_uptime_all():
             }
         )
 
-    return all_times
+    return jsonify(all_times)

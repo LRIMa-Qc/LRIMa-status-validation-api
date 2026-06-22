@@ -21,8 +21,21 @@ def get_uptime_of_systemd_service(service: str) -> datetime:
         capture_output=True,
         check=True,
     ).stdout.decode("utf-8")
+    is_alive = (
+        True
+        if subprocess.run(
+            ["systemctl", "is-active", "--quiet", service],
+            capture_output=True,
+        )
+        == 0
+        else False
+    )
     list_of_time = unparsed_time.split("=")[-1].strip()
-    return datetime.strptime(list_of_time, "%a %Y-%m-%d %H:%M:%S %Z")
+    return (
+        datetime.strptime(list_of_time, "%a %Y-%m-%d %H:%M:%S %Z")
+        if is_alive
+        else datetime.fromtimestamp(0)
+    )
 
 
 def get_uptime_of_pm2_service(service: str) -> datetime:

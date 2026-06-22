@@ -33,7 +33,8 @@ def get_uptime_of_pm2_service(service: str):
             check=True,
         ).stdout.decode("utf-8")
     )
-    parsed_time = map(lambda x: x["pm2_env"]["env"])
+    parsed_time = map(lambda x: x["pm2_env"]["env"], unparsed_time)
+    print(parsed_time)
 
 
 if __name__ == "__main__":

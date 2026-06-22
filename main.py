@@ -61,7 +61,7 @@ def get_service_uptime(service_name: str):
     )
 
 
-@app.route("/uptime/")
+@app.route("/uptime")
 def get_service_uptime_all():
     all_times = []
     for i in SERVICE_WHITELIST:
@@ -83,3 +83,4 @@ def get_service_uptime_all():
         )
 
     return jsonify(all_times)
+

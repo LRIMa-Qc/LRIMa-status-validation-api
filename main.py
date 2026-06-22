@@ -60,3 +60,29 @@ def get_service_uptime(service_name: str):
         "manager": manager,
         "uptime": uptime.isoformat(),
     }
+
+
+@app.get("/uptime/")
+def get_service_uptime_all():
+    all_times = []
+    for i in SERVICE_WHITELIST:
+        manager = SERVICE_WHITELIST.get(i)
+
+        uptime = None
+        match manager:
+            case "systemd":
+                uptime = get_uptime_of_systemd_service(i)
+            case "pm2":
+                uptime = get_uptime_of_pm2_service(i)
+            case _:
+                raise HTTPException(
+                    status_code=500, detail=f"Unknown manager: {manager}"
+                )
+        all_times.append(
+            {
+                "service": i,
+                "uptime": uptime.isoformat(),
+            }
+        )
+
+    return

@@ -4,8 +4,8 @@ import json
 
 
 def main():
-    get_uptime_of_systemd_service("nginx")
-    get_uptime_of_pm2_service("server")
+    print(get_uptime_of_pm2_service("server"))
+    print(get_uptime_of_systemd_service("nginx"))
 
 
 def get_uptime_of_systemd_service(service: str):

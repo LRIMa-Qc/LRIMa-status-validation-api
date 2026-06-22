@@ -5,7 +5,7 @@ import json
 
 def main():
     get_uptime_of_systemd_service("nginx")
-    get_uptime_of_pm2_service("temporary value")
+    get_uptime_of_pm2_service("server")
 
 
 def get_uptime_of_systemd_service(service: str):
@@ -33,8 +33,14 @@ def get_uptime_of_pm2_service(service: str):
             check=True,
         ).stdout.decode("utf-8")
     )
-    parsed_time = list(map(lambda x: x["pm2_env"]["pm_uptime"], unparsed_time))
-    print(parsed_time)
+    names = list(map(lambda x: x["name"], unparsed_time))
+    index_of_service = names.index(service)
+    if index_of_service == -1:
+        raise KeyError("didn't find requested service")
+    uptimes = list(map(lambda x: x["pm2_env"]["pm_uptime"], unparsed_time))
+    uptime_of_requested_service = uptimes[index_of_service]
+    print(uptime_of_requested_service)
+    return uptime_of_requested_service
 
 
 if __name__ == "__main__":

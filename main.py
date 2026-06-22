@@ -12,7 +12,7 @@ def get_update_of_service(service: str):
         capture_output=True,
         check=True,
     ).stdout.decode("utf-8")
-    list_of_time = unparsed_time.split("=")[-1]
+    list_of_time = unparsed_time.split("=")[-1].strip()
     # ActiveEnterTimestamp=Wed 2026-06-17 16:48:16 EDT
     date = datetime.strptime(
         list_of_time,
